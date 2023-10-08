@@ -1,12 +1,14 @@
-import e, {Router} from 'express'
+import {Router} from 'express'
+import bodyParser from 'body-parser'
 import {managermd} from '../dao/managermd.js'
 import crypto from 'crypto'
 export const router = Router ()
+router.use(bodyParser.urlencoded({ extended: true }));
 
 router.post ('/registro', async (req,res)=> {
-    console.log ("registrito")
-console.log (req.body)
-let {name, email,password} = req.body
+    const name = req.body.name
+    const email= req.body.email
+    let password = req.body.password
 if (!name || !email || !password ) {
     return res.status(400).send('faltan datos')
 }
@@ -29,10 +31,28 @@ res.redirect(`/login?usuarioCreado=${email}`)
 })
 
 router.post ('/login',async (req,res)=>{
-    Let (email, password) = req.body
+    let email = req.body.email
+    let password = req.body.password
+    const emailAdministrador = 'adminCoder@coder.com'
+    const passwordAdministrador = 'adminCod3r123'
+
+    if (email===emailAdministrador){
+        if (password === passwordAdministrador) {
+            req.session.usuario={
+                nombre : 'Administrador',
+                carrito : null,
+                email : email,
+                typeofuser : 'admin',
+                 };  
+
+                return res.redirect ('/admin')
+        } else {
+            return res.status(401).send('Password incorrecta')  
+        }      
+    }
 
     if (!email || !password) {
-        return res.status(400),send('Faltan datos')
+        return res.status(400).send('Faltan datos')
     }
     password=crypto.createHmac('sha256','palabraSecreta').update(password).digest('base64')
 
@@ -48,10 +68,12 @@ router.post ('/login',async (req,res)=>{
 
     req.session.usuario={
         nombre : usuario.name ,
-        email : usuario.email
+        carrito : usuario.cartId,
+        email : usuario.email,
+        typeofuser : 'user'
      }
 
-     res.redirect ('/perfil')
+     res.redirect ('/products')
 
 })
 

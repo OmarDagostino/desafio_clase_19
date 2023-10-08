@@ -1,3 +1,4 @@
+{{>menu}}
 <body>
     <h4>
         Identificador del carrito 
@@ -14,7 +15,6 @@
                 <th>Descripción</th>
                 <th>Precio</th>
                 <th>Código</th>
-                <th>Existencias</th>
                 <th>Cantidad comprada</th>
             </tr>
         </thead>
@@ -26,7 +26,6 @@
                     <td>{{this.description}}</td>
                     <td>{{this.price}}</td>
                     <td>{{this.code}}</td>
-                    <td>{{this.stock}}</td>
                     <td>{{this.cantidad}}</td>
                 </tr>
             {{/each}}

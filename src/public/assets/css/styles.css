@@ -18,6 +18,19 @@
     margin-top: 5px;
 }
 
+.menu-container {
+  display: flex; 
+  align-items: center; 
+}
+
+.typeofuser {
+  display:flex;
+  margin-right: 20px;
+}
+.menu ul {
+  padding-inline-start: 10px !important;
+}
+
 .menu li {
     list-style: none;
     padding: 0;
@@ -26,7 +39,7 @@
   
   .menu li {
     display: inline;
-    margin-right: 10px; 
+    margin-right: 5px; 
     background-color: lightblue;
     color:black;
     font-weight: bold;
@@ -36,9 +49,7 @@
     border-radius: 5px; 
   }
   
-  .menu li:last-child {
-    margin-right: 0; 
-  }
+  
   
 
 table {

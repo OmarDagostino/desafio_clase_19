@@ -16,24 +16,50 @@ export const managermd = {
 // Obtener un carrito por su ID
 obtenerCarrito : async (cid)=>
 {
+  
   try {
+    
     const cartId = cid;
     const validObjectId = ObjectId.isValid(cartId) ? new ObjectId(cartId) : null;
     if (!validObjectId) { 
-      res.status(404).send("Identificador del carrito invalido");
+      console.error("Identificador del carrito invalido");
       } else {
+       
         const cart = await cartModel.findOne({ _id : cartId }).populate('products.productId');
+       
         if (cart) {
           return(cart);
         } else {
-          res.status(404).send('Carrito no encontrado');
+          console.error('Carrito no encontrado');
         }
       }
   } catch (error) {
-    res.status(500).send('Error en el servidor');
+    console.error('Error en el servidor', error);
   }
 },
-
+obtenerCarritoSinPopulate : async (cid)=>
+{
+  
+  try {
+    
+    const cartId = cid;
+    const validObjectId = ObjectId.isValid(cartId) ? new ObjectId(cartId) : null;
+    if (!validObjectId) { 
+      console.error("Identificador del carrito invalido");
+      } else {
+       
+        const cart = await cartModel.findOne({ _id : cartId });
+       
+        if (cart) {
+          return(cart);
+        } else {
+          console.error('Carrito no encontrado');
+        }
+      }
+  } catch (error) {
+    console.error('Error en el servidor', error);
+  }
+},
 // Actualizar un carrito
 actualizarCarrito : async  (newcart,cid) =>
 {
@@ -41,22 +67,23 @@ actualizarCarrito : async  (newcart,cid) =>
     const cartId = cid;
     const validObjectId = ObjectId.isValid(cartId) ? new ObjectId(cartId) : null;
     if (!validObjectId) { 
-      res.status(404).send("Identificador del carrito invalido");
+      console.error("Identificador del carrito invalido");
       } else {
 
-        const cart = await cartModel.findOne({ _id : cartId }).exec();
+        let cart = await cartModel.findOne({ _id : cartId }).exec();
 
         if (!cart) {
-          res.status(404).send('Carrito no encontrado');
+          console.error('Carrito no encontrado');
           return;
         }
             cart = newcart;
             await cart.save();
-            res.status(201).json(cart);
+      
         }
       
   } catch (error) {
-    res.status(500).send('Error en el servidor');
+    console.error (error)
+    console.error('** **  **Error en el servidor** ** **');
   }
 },
 
@@ -66,10 +93,10 @@ actualizarCarrito : async  (newcart,cid) =>
     try {
      
       await newcart.save();
-      res.status(201).json(newcart);
+      
     }
      catch (error) {
-      res.status(500).send(`Error en el servidor ${error}`);
+      console.error(`Error en el servidor ${error}`);
     }
   },
 
@@ -86,7 +113,7 @@ obtenerProductos : async  (combinedFilter, options) =>
 
     return (products);
   } catch (error) {
-    res.status(500).json({ status: 'error', message: 'Error en el servidor',error });
+    console.error({ status: 'error', message: 'Error en el servidor',error });
     console.error(error)
   }
 },
@@ -98,17 +125,17 @@ obtenerProducto : async (pid) =>
     const productId = pid ;
     const validObjectId = ObjectId.isValid(productId) ? new ObjectId(productId) : null;
     if (!validObjectId) { 
-      res.status(404).send("Identificador de Producto invalido");
+      console.error("Identificador de Producto invalido");
       } else {
         const product = await productModel.findOne({ _id: productId}).exec();
         if (product) {
           return (product);
         } else {
-          res.status(404).send('Producto no encontrado');
+          console.error('Producto no encontrado');
         }
       }
   } catch (error) {
-    res.status(500).send(`Error en el servidor ${error}`);
+    console.error(`Error en el servidor ${error}`);
   }
 },
 
@@ -121,7 +148,7 @@ obtenerProductoPorCodigo : async (codigo) =>
   return existingProduct
  }
  catch (error) {
-  res.status(500).send(`Error en el servidor ${error}`);
+  console.error(`Error en el servidor ${error}`);
   }
 },
 
@@ -133,9 +160,9 @@ crearProducto : async (newProduct) =>
       const product = new productModel({ ...newProduct});
       await product.save();
   
-      res.status(201).json(product);
+      
     } catch (error) {
-      res.status(500).send('Error en el servidor');
+      console.error('Error en el servidor');
     }
   },
   
@@ -148,22 +175,22 @@ actualizarProducto : async (producto,pid) =>
     const updatedProduct = producto;
     const validObjectId = ObjectId.isValid(productId) ? new ObjectId(productId) : null;
     if (!validObjectId) { 
-      res.status(404).send("Identificador de Producto invalido");
+      console.error("Identificador de Producto invalido");
       } else {
 
 
     const product = await productModel.findOne({ _id : productId }).exec();
 
     if (!product) {
-      res.status(404).send('Producto no encontrado');
+      console.error('Producto no encontrado');
       return;
     }
 
     await product.save();
-    res.status(200).json(product);
+    
   }
   } catch (error) {
-    res.status(500).send('Error en el servidor');
+    console.error('Error en el servidor');
   }
 },
 
@@ -174,22 +201,22 @@ eliminarProducto : async (pid) =>
     const productId = pid;
     const validObjectId = ObjectId.isValid(productId) ? new ObjectId(productId) : null;
     if (!validObjectId) { 
-      res.status(404).send("Identificador de Producto invalido");
+      console.error("Identificador de Producto invalido");
       } else {
 
     const product = await productModel.findOne({ _id : productId }).exec();
 
     if (!product) {
-      res.status(404).send('Producto no encontrado');
+      console.error('Producto no encontrado');
       return;
     }
 
     await product.deleteOne({ _id : productId })
-    res.status(200).send(`Producto con ID ${productId} eliminado`)
+    console.error(`Producto con ID ${productId} eliminado`)
   }
   } catch (error) {
     console.error(error)
-    res.status(500).send('Error en el servidor')
+    console.error('Error en el servidor')
   }
 },
 
@@ -202,20 +229,33 @@ obtenerUsuarioPorEmail : async (direccionDeCorreo) =>
     return existingUser
    }
    catch (error) {
-    res.status(500).send(`Error en el servidor ${error}`);
+    console.error(`Error en el servidor ${error}`);
     }
 
 },
 
-crearUsuario : async (nombre,email,pasword) =>
+crearUsuario : async (name,email,password) =>
 {
+  let cartId
   try {
-    const user = new userModel({nombre,email,pasword});
+    const newCart = new cartModel({
+      products: []
+    });
+    await newCart.save();
+    cartId = newCart._id
+  }
+   catch (error) {
+    consosle.error(error)
+  }
+
+  try {
+    
+    const user = new userModel({name,email,password,cartId});
     await user.save();
 
    }
    catch (error) {
-    res.status(500).send(`Error en el servidor ${error}`);
+    console.error(error);
     }
 }
 

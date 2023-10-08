@@ -9,10 +9,9 @@ const cartSchema = new mongoose.Schema({
         {
           productId: { 
             type:mongoose.Schema.Types.ObjectId, 
-            required: true,
             ref:"products1" 
           },
-          quantity: { type: Number, required: true },
+          quantity: { type: Number},
         },
         { _id: false } 
       ),
@@ -27,7 +26,9 @@ const usersCollection = 'users1'
 const userSchema = new mongoose.Schema ({
     name : String,
     email: {type:String, unique:true},
-    password : String
+    password : String,
+    cartId : {required : true, type:mongoose.Schema.Types.ObjectId},
+    typeofuser : String
 })
 
 export const userModel = mongoose.model (usersCollection, userSchema)

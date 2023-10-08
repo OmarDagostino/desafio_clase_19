@@ -1,4 +1,9 @@
-
+{{>menu}}
+<h3> Bienvenido 
+<strong> {{name}} </strong>
+<strong> Tu identificador del carrito es : </strong>
+<strong> {{cartId}} </strong>
+</h3>
 <body>
     <table>
         <thead>
@@ -33,11 +38,12 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const cartId = "{{cartId}}"
             const addToCartButtons = document.querySelectorAll(".addToCartButton");
             addToCartButtons.forEach(function (button) {
                 button.addEventListener("click", function () {
                     const productId = button.getAttribute("data-productid");
-                    fetch(`/api/carts/product/${productId}`, {
+                    fetch(`/api/carts/${cartId}/product/${productId}`, {
                         method: "POST",
                     })
                     .then(function (response) {

@@ -1,22 +1,36 @@
+<div class="menu-container">
+<h5> Menu &#9658 </h5>
 <ul class="menu"> 
+    {{#if mostrarMenu0}}
     <li>
-        <a href="/home"> Home Page</a>
+        <a href="/"> Home Page</a>
     </li>
-
+    {{/if}}
+    {{#if mostrarMenu1}}
     <li>
         <a href="/registro"> Registro</a>
     </li>
-
+    {{/if}}
+    {{#if mostrarMenu2}}
     <li>
         <a href="/login"> Login </a>
     </li>
-
+    {{/if}}
+    {{#if mostrarMenu3}}
     <li>
-        <a href="/perfil"> Perfil</a>
+        <a href="/products"> Productos</a>
     </li>
-
+    {{/if}}
+    {{#if mostrarMenu4}}
     <li>
-        <a href="/api/session/logout"> Log Out</a>
+        <a href="/carts"> Ver carrito</a>
     </li>
-
+    {{/if}}
+    {{#if mostrarMenu5}}
+    <li>
+        <a href="/api/sesions/logout"> Log Out</a>
+    </li>
+    {{/if}}
 </ul>
+<h4 class="typeofuser"> {{typeofuser}} </h4>
+</div>

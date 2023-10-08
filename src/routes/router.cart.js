@@ -37,14 +37,12 @@ router.post('/carts/:cid/product/:pid', async (req, res) => {
     const cartId = req.params.cid;
     const productId = req.params.pid;
     const quantity = 1;
-
     const validObjectId = ObjectId.isValid(cartId) ? new ObjectId(cartId) : null;
     if (!validObjectId) { 
+      
       res.status(404).send("Identificador del carrito invalido");
       } else {
-
-        const cart = await managermd.obtenerCarrito(cid);
-
+        const cart = await managermd.obtenerCarritoSinPopulate(cartId);
         if (!cart) {
           res.status(404).send('Carrito no encontrado');
           return;
@@ -55,9 +53,9 @@ router.post('/carts/:cid/product/:pid', async (req, res) => {
         const validObjectId = ObjectId.isValid(productId) ? new ObjectId(productId) : null;
         if (!validObjectId) { 
           res.status(404).send("Identificador de Producto invalido");
+          return;
           } else {
             const existingProduct = cart.products.find((p) => p.productId == productId);
-
             if (existingProduct) {
               existingProduct.quantity += quantity;
             } else {
