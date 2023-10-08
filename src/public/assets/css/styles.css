@@ -22,11 +22,21 @@
   display: flex; 
   align-items: center; 
 }
-
+.error {
+  background-color: red;
+  color:yellow;
+  font-weight: bolder;
+  width: fit-content;
+}
 .typeofuser {
   display:flex;
   margin-right: 20px;
 }
+
+.menu a {
+  text-decoration: none;
+}
+
 .menu ul {
   padding-inline-start: 10px !important;
 }

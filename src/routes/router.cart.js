@@ -106,7 +106,7 @@ router.post('/carts/product/:pid', async (req, res) => {
     }
   });
 
-  // DELETE para eliminar un producto de un carrito 
+// DELETE para eliminar un producto de un carrito 
 router.delete('/carts/:cid/product/:pid', async (req, res) => {
   try {
     const cartId = req.params.cid;
@@ -150,8 +150,8 @@ router.delete('/carts/:cid/product/:pid', async (req, res) => {
   }
 });
 
- // DELETE para eliminar todos los productos de un carrito 
- router.delete('/carts/:cid', async (req, res) => {
+// DELETE para eliminar todos los productos de un carrito 
+router.delete('/carts/:cid', async (req, res) => {
     try {
       const cartId = req.params.cid;
 
@@ -178,7 +178,7 @@ router.delete('/carts/:cid/product/:pid', async (req, res) => {
     }
   });
 
-  // PUT para actualizar la cantidad de un producto de un carrito existente
+// PUT para actualizar la cantidad de un producto de un carrito existente
 router.put('/carts/:cid/product/:pid', async (req, res) => {
   try {
     const cartId = req.params.cid;
@@ -263,7 +263,5 @@ router.put('/carts/:cid', async (req, res) => {
     res.status(500).send('Error en el servidor');
   }
 });
-
-
 
 export default router;

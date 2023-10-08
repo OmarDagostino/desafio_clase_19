@@ -5,21 +5,23 @@ import crypto from 'crypto'
 export const router = Router ()
 router.use(bodyParser.urlencoded({ extended: true }));
 
+// Registro de un nuevo usuario 
+
 router.post ('/registro', async (req,res)=> {
     const name = req.body.name
     const email= req.body.email
     let password = req.body.password
 if (!name || !email || !password ) {
-    return res.status(400).send('faltan datos')
+    return res.redirect('/registro?error=faltan datos')
 }
 
 if (!validarCorreoElectronico(email)) {
-    return res.status(400).send('el formato del correo electrónico es invalido')
+    return res.redirect('/registro?error=el formato del correo electrónico es invalido')
 }
 
 const existeUsuario = await managermd.obtenerUsuarioPorEmail(email)
 if (existeUsuario) {
-    return res.status(400).send('El email informado ya esta registrado')
+    return res.redirect('/registro?error=El email informado ya esta registrado')
 }
 
 password=crypto.createHmac('sha256','palabraSecreta').update(password).digest('base64')
@@ -29,6 +31,8 @@ managermd.crearUsuario(name,email,password)
 res.redirect(`/login?usuarioCreado=${email}`)
 
 })
+
+// Login de un usuario o del administrador
 
 router.post ('/login',async (req,res)=>{
     let email = req.body.email
@@ -47,23 +51,23 @@ router.post ('/login',async (req,res)=>{
 
                 return res.redirect ('/admin')
         } else {
-            return res.status(401).send('Password incorrecta')  
+            return res.redirect('/login?error=Password incorrecta')
         }      
     }
 
     if (!email || !password) {
-        return res.status(400).send('Faltan datos')
+       return res.redirect('/login?error=Faltan datos')
     }
     password=crypto.createHmac('sha256','palabraSecreta').update(password).digest('base64')
 
     let usuario = await managermd.obtenerUsuarioPorEmail(email)
 
     if(!usuario) {
-        return res.status(401).send('El email informado no esta registrado')
+        return res.redirect('/login?error=El email informado no esta registrado')
     }
 
     if (usuario.password !== password) {
-        return res.status(401).send('Password incorrecta') 
+        return res.redirect('/login?error=Password incorrecta')
     }
 
     req.session.usuario={
@@ -76,6 +80,8 @@ router.post ('/login',async (req,res)=>{
      res.redirect ('/products')
 
 })
+
+// logOut
 
 router.get('/logout', async (req,res) => {
 

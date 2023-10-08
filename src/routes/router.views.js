@@ -6,10 +6,9 @@ import __dirname from '../util.js';
 import {cartModel, productModel} from '../dao/models/user.model.js';
 import { ObjectId } from 'mongodb';
 
-
 const router = express.Router()
 
-
+// middleware para redireccionar al login si no tiene una sesion activa 
 const auth=(req,res,next)=>{
     if (req.session.usuario) {
       
@@ -19,6 +18,7 @@ const auth=(req,res,next)=>{
     }
 }
 
+// middleware para redireccionar a la vista principal si tiene una sesion activa 
 const auth2=(req,res,next)=>{
     if (req.session.usuario) {
         return res.redirect('/products')  
@@ -27,10 +27,19 @@ const auth2=(req,res,next)=>{
     }
 }
 
+// mostrarMenu maneja la renderizacion de los items del menu segun corresponda (con true o false)
+//
+// 0 => Home
+// 1 => Registro
+// 2 => Login
+// 3 => Productos
+// 4 => Carrito 
+// 5 => Logout
+
 let mostrarMenu0 = true;
 let mostrarMenu1 = true;
 let mostrarMenu2 = true;
-let mostrarMenu3= true;
+let mostrarMenu3 = true;
 let mostrarMenu4 = true;
 let mostrarMenu5 = true;
 
@@ -41,6 +50,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'handlebars');
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ruta para la vista de Home Page
 router.get('/', auth, (req,res)=>{
   mostrarMenu0=true;
   mostrarMenu1=true;
@@ -53,6 +63,8 @@ router.get('/', auth, (req,res)=>{
     res.setHeader('Content-Type','text/html');
     res.status(200).render('home',{typeofuser,mostrarMenu0,mostrarMenu1,mostrarMenu2,mostrarMenu3,mostrarMenu4,mostrarMenu5});
   });
+
+  // ruta para la vista del administrador
   router.get('/admin', auth, (req,res)=>{
     mostrarMenu0=false;
     mostrarMenu1=false;
@@ -66,6 +78,8 @@ router.get('/', auth, (req,res)=>{
       res.setHeader('Content-Type','text/html');
       res.status(200).render('admin',{imageUrl, typeofuser,mostrarMenu0,mostrarMenu1,mostrarMenu2,mostrarMenu3,mostrarMenu4,mostrarMenu5});
     });
+
+// ruta para la vista del LOGIN
 router.get('/login', auth2, (req,res)=>{
   mostrarMenu0=true;
   mostrarMenu1=true;
@@ -74,10 +88,17 @@ router.get('/login', auth2, (req,res)=>{
   mostrarMenu4=false;
   mostrarMenu5=false;
   let typeofuser='' ;
+  let error= false
+  let errorDetail = ''
+  if (req.query.error){
+    error=true,
+    errorDetail=req.query.error
+  }
     res.setHeader('Content-Type','text/html');
-    res.status(200).render('login',{typeofuser, mostrarMenu0,mostrarMenu1,mostrarMenu2,mostrarMenu3,mostrarMenu4,mostrarMenu5});
+    res.status(200).render('login',{error,errorDetail,typeofuser, mostrarMenu0,mostrarMenu1,mostrarMenu2,mostrarMenu3,mostrarMenu4,mostrarMenu5});
   });
 
+// ruta para la vista del registro de usuario
 router.get('/registro',auth2,  (req,res)=>{
   mostrarMenu0=true;
   mostrarMenu1=false;
@@ -86,16 +107,23 @@ router.get('/registro',auth2,  (req,res)=>{
   mostrarMenu4=false;
   mostrarMenu5=false;
   let typeofuser='';
-    res.setHeader('Content-Type','text/html');
-    res.status(200).render('registro',{typeofuser,mostrarMenu0,mostrarMenu1,mostrarMenu2,mostrarMenu3,mostrarMenu4,mostrarMenu5});
+  let error= false
+  let errorDetail = ''
+  if (req.query.error){
+    error=true,
+    errorDetail=req.query.error
   }
-  
-    )
+    res.setHeader('Content-Type','text/html');
+    res.status(200).render('registro',{error, errorDetail, typeofuser,mostrarMenu0,mostrarMenu1,mostrarMenu2,mostrarMenu3,mostrarMenu4,mostrarMenu5});
+  })
+
+// ruta para el chat
 router.get('/chat', (req,res)=> {
     res.setHeader('Content-Type','text/html');
     res.status(200).render('chat');
   })
-  
+
+// ruta para mostrar los productos a un usuario
 router.get('/products', auth,  async (req,res) => {
     try {
      
@@ -129,7 +157,8 @@ router.get('/products', auth,  async (req,res) => {
       res.status(500).send('Error en el servidor');
     }
   })
-  
+ 
+// Ruta para mostrar el contenido de un carrito por su _id
 router.get('/carts/:cid',  async (req,res)  => { 
       try {
       const cartId = req.params.cid;
@@ -168,7 +197,8 @@ router.get('/carts/:cid',  async (req,res)  => {
    
   });
 
-  router.get('/carts', auth, async (req,res)  => { 
+// ruta para mostrar el contenido del carrito del usuario que hizo Login
+router.get('/carts', auth, async (req,res)  => { 
     try {
     const cartId = req.session.usuario.carrito;
     const validObjectId = ObjectId.isValid(cartId) ? new ObjectId(cartId) : null;

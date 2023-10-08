@@ -3,6 +3,11 @@
 <h2>Login de usuario :</h2>
 <hr>
 <br> 
+{{#if error}}
+<div class=error>
+    {{errorDetail}}
+</div>
+{{/if}}
 
 <form action="/api/sesions/login" method="post"> 
 <input type="email" name="email" placeholder="email">
